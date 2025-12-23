@@ -2,45 +2,42 @@
 <html lang="tr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mirror Me - Final Pro</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Mirror Me - Mobile Fix</title>
     <style>
         :root { --primary: #00d2ff; --bg: #0b101b; --glass: rgba(255, 255, 255, 0.95); }
-        body { background-color: var(--bg); color: white; font-family: 'Segoe UI', sans-serif; margin: 0; display: flex; flex-direction: column; align-items: center; height: 100vh; overflow: hidden; }
-        .logo { color: var(--primary); font-weight: 900; font-size: 22px; letter-spacing: 4px; margin: 20px 0; text-transform: uppercase; }
-        #mirror-container { width: 85%; max-width: 340px; height: 50vh; border-radius: 40px; border: 2px solid var(--primary); background: #000; position: relative; overflow: hidden; }
+        body { background-color: var(--bg); color: white; font-family: sans-serif; margin: 0; display: flex; flex-direction: column; align-items: center; height: 100vh; overflow: hidden; }
+        .logo { color: var(--primary); font-weight: 900; font-size: 20px; letter-spacing: 3px; margin: 15px 0; }
+        #mirror-container { width: 90%; max-width: 350px; height: 50vh; border-radius: 30px; border: 2px solid var(--primary); background: #000; position: relative; overflow: hidden; }
         video, .result-img { width: 100%; height: 100%; object-fit: cover; }
-        #ui-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; background: rgba(0,0,0,0.5); z-index: 10; pointer-events: none; }
-        #counter { font-size: 80px; font-weight: 900; color: var(--primary); }
-        #instruction { background: white; color: #000; padding: 10px 20px; border-radius: 30px; font-weight: 900; margin-top: 15px; font-size: 11px; }
-        #angle-selector { display: none; justify-content: center; gap: 8px; margin-top: 15px; }
-        .angle-btn { background: rgba(0, 210, 255, 0.1); border: 1px solid var(--primary); color: var(--primary); padding: 8px 15px; border-radius: 20px; font-size: 10px; cursor: pointer; }
-        .angle-btn.active { background: var(--primary); color: #000; }
-        .bottom-nav { width: 90%; max-width: 400px; background: var(--glass); border-radius: 40px; display: flex; justify-content: space-around; align-items: center; padding: 12px 0; position: absolute; bottom: 15px; }
-        .main-btn { width: 65px; height: 65px; background: white; border: 4px solid var(--bg); border-radius: 50%; margin-top: -45px; display: flex; align-items: center; justify-content: center; cursor: pointer; }
+        #ui-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; background: rgba(0,0,0,0.4); pointer-events: none; }
+        #counter { font-size: 60px; font-weight: bold; color: var(--primary); }
+        #instruction { background: white; color: #000; padding: 8px 15px; border-radius: 20px; font-weight: bold; font-size: 10px; margin-top: 10px; }
+        #angle-selector { display: none; justify-content: center; gap: 5px; margin-top: 10px; width: 100%; }
+        .angle-btn { background: rgba(0, 210, 255, 0.2); border: 1px solid var(--primary); color: var(--primary); padding: 6px 12px; border-radius: 15px; font-size: 9px; cursor: pointer; }
+        .bottom-nav { width: 95%; background: var(--glass); border-radius: 35px; display: flex; justify-content: space-around; align-items: center; padding: 10px 0; position: absolute; bottom: 15px; }
+        .main-btn { width: 60px; height: 60px; background: white; border: 4px solid var(--bg); border-radius: 50%; margin-top: -40px; display: flex; align-items: center; justify-content: center; }
         #loader { display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 100; flex-direction: column; align-items: center; justify-content: center; }
-        .spinner { width: 40px; height: 40px; border: 4px solid rgba(255,255,255,0.1); border-top: 4px solid var(--primary); border-radius: 50%; animation: spin 1s linear infinite; }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
     </style>
 </head>
 <body>
     <div class="logo">MIRROR ME</div>
     <div id="mirror-container">
-        <div id="loader"><div class="spinner"></div><p>AI Hazırlanıyor...</p></div>
-        <div id="ui-overlay"><div id="counter"></div><div id="instruction">360° TARAMAYI BAŞLATIN</div></div>
-        <video id="webcam" autoplay playsinline></video>
+        <div id="loader"><p>AI İŞLENİYOR...</p></div>
+        <div id="ui-overlay"><div id="counter"></div><div id="instruction">360° TARAMAYI BAŞLAT</div></div>
+        <video id="webcam" autoplay playsinline muted></video>
         <div id="result-display" style="display:none; height:100%;"></div>
     </div>
     <div id="angle-selector">
-        <div class="angle-btn active" onclick="changeView('front', this)">ÖN</div>
-        <div class="angle-btn" onclick="changeView('right', this)">SAĞ</div>
-        <div class="angle-btn" onclick="changeView('back', this)">ARKA</div>
-        <div class="angle-btn" onclick="changeView('left', this)">SOL</div>
+        <button class="angle-btn" onclick="changeView('front')">ÖN</button>
+        <button class="angle-btn" onclick="changeView('right')">SAĞ</button>
+        <button class="angle-btn" onclick="changeView('back')">ARKA</button>
+        <button class="angle-btn" onclick="changeView('left')">SOL</button>
     </div>
     <div class="bottom-nav">
-        <div style="color:#222; font-size:10px; font-weight:bold; cursor:pointer;" onclick="location.reload()">SIFIRLA</div>
-        <div class="main-btn" onclick="startScan()"><img src="https://cdn-icons-png.flaticon.com/512/685/685655.png" width="30"></div>
-        <div style="color:#222; font-size:10px; font-weight:bold; cursor:pointer;" onclick="selectGarment()">TARZ SEÇ</div>
+        <div style="color:#222; font-size:9px; font-weight:bold;" onclick="location.reload()">SIFIRLA</div>
+        <div class="main-btn" onclick="startScan()"><img src="https://cdn-icons-png.flaticon.com/512/685/685655.png" width="25"></div>
+        <div style="color:#222; font-size:9px; font-weight:bold;" onclick="selectGarment()">TARZ SEÇ</div>
     </div>
     <canvas id="canvas" style="display:none;"></canvas>
 
@@ -52,10 +49,9 @@
         let twinImgs = {};
         let currentGarment = null;
 
-        // Kamera Başlat
         const video = document.getElementById('webcam');
         navigator.mediaDevices.getUserMedia({ video: { facingMode: "user" } })
-            .then(s => video.srcObject = s);
+            .then(s => video.srcObject = s).catch(e => alert("Kamera hatası: " + e));
 
         window.startScan = async () => {
             const steps = ["ÖN", "SAĞ", "ARKA", "SOL"];
@@ -92,25 +88,24 @@
             input.click();
         };
 
-        window.changeView = async (angle, btn) => {
-            if(!twinImgs[angle] || !currentGarment) return;
+        window.changeView = async (angle) => {
             document.getElementById('loader').style.display = 'flex';
-            
             try {
-                // Base64'ten Blob'a çevrim
                 const personBlob = await (await fetch(twinImgs[angle])).blob();
                 const garmentBlob = await (await fetch(currentGarment)).blob();
 
-                const response = await hf.request({
+                // DİKKAT: Buradaki istek yapısı Hugging Face JS kütüphanesi sayesinde
+                // tarayıcı CORS engellerini minimize eder.
+                const response = await hf.imageToImage({
                     model: "yisol/IDM-VTON",
                     inputs: {
-                        person_image: personBlob,
-                        garment_image: garmentBlob
+                        image: personBlob,
+                        mask_image: personBlob, // Basit model için placeholder
                     },
                     parameters: {
-                        "category": "upper_body"
+                        "garment_image": garmentBlob
                     }
-                });
+                }, { wait_for_model: true });
 
                 const url = URL.createObjectURL(response);
                 document.getElementById('webcam').style.display = "none";
@@ -118,7 +113,7 @@
                 document.getElementById('result-display').innerHTML = `<img src="${url}" class="result-img">`;
             } catch (e) {
                 console.error(e);
-                alert("Hata: " + e.message + "\nLütfen sayfayı yenileyip tekrar deneyin.");
+                alert("Hata oluştu. Model uyanıyor olabilir, lütfen 10 saniye sonra tekrar deneyin.");
             } finally {
                 document.getElementById('loader').style.display = 'none';
             }
