@@ -3,82 +3,166 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Mirror Me - Mobile Fix</title>
+    <title>Mirror Me - Pro 360</title>
     <style>
         :root { --primary: #00d2ff; --bg: #0b101b; --glass: rgba(255, 255, 255, 0.95); }
         body { background-color: var(--bg); color: white; font-family: sans-serif; margin: 0; display: flex; flex-direction: column; align-items: center; height: 100vh; overflow: hidden; }
-        .logo { color: var(--primary); font-weight: 900; font-size: 20px; letter-spacing: 3px; margin: 15px 0; }
-        #mirror-container { width: 90%; max-width: 350px; height: 50vh; border-radius: 30px; border: 2px solid var(--primary); background: #000; position: relative; overflow: hidden; }
+        
+        .logo { color: var(--primary); font-weight: 900; font-size: 20px; letter-spacing: 3px; margin: 15px 0; text-transform: uppercase; }
+        
+        #mirror-container { 
+            width: 90%; max-width: 350px; height: 55vh; 
+            border-radius: 30px; border: 2px solid var(--primary); 
+            background: #000; position: relative; overflow: hidden;
+            box-shadow: 0 0 30px rgba(0, 210, 255, 0.2);
+        }
+
         video, .result-img { width: 100%; height: 100%; object-fit: cover; }
-        #ui-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; background: rgba(0,0,0,0.4); pointer-events: none; }
-        #counter { font-size: 60px; font-weight: bold; color: var(--primary); }
-        #instruction { background: white; color: #000; padding: 8px 15px; border-radius: 20px; font-weight: bold; font-size: 10px; margin-top: 10px; }
-        #angle-selector { display: none; justify-content: center; gap: 5px; margin-top: 10px; width: 100%; }
-        .angle-btn { background: rgba(0, 210, 255, 0.2); border: 1px solid var(--primary); color: var(--primary); padding: 8px 14px; border-radius: 15px; font-size: 10px; cursor: pointer; border: 1px solid var(--primary); }
-        .bottom-nav { width: 95%; background: var(--glass); border-radius: 35px; display: flex; justify-content: space-around; align-items: center; padding: 10px 0; position: absolute; bottom: 15px; }
-        .main-btn { width: 60px; height: 60px; background: white; border: 4px solid var(--bg); border-radius: 50%; margin-top: -40px; display: flex; align-items: center; justify-content: center; }
-        #loader { display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 100; flex-direction: column; align-items: center; justify-content: center; }
+
+        #ui-overlay { 
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%; 
+            display: flex; flex-direction: column; align-items: center; justify-content: center; 
+            background: rgba(0,0,0,0.4); pointer-events: none; z-index: 10;
+        }
+
+        #counter { font-size: 70px; font-weight: bold; color: var(--primary); }
+        #instruction { background: white; color: #000; padding: 10px 20px; border-radius: 25px; font-weight: bold; font-size: 11px; margin-top: 10px; text-transform: uppercase; }
+
+        #angle-selector { display: none; justify-content: center; gap: 8px; margin-top: 15px; width: 100%; }
+        .angle-btn { 
+            background: rgba(0, 210, 255, 0.1); border: 1px solid var(--primary); 
+            color: var(--primary); padding: 8px 15px; border-radius: 20px; 
+            font-size: 10px; font-weight: bold; cursor: pointer; 
+        }
+        .angle-btn.active { background: var(--primary); color: #000; }
+
+        .bottom-nav { 
+            width: 90%; background: var(--glass); border-radius: 40px; 
+            display: flex; justify-content: space-around; align-items: center; 
+            padding: 12px 0; position: absolute; bottom: 20px; 
+        }
+
+        .main-btn { 
+            width: 65px; height: 65px; background: white; border: 4px solid var(--bg); 
+            border-radius: 50%; margin-top: -45px; display: flex; 
+            align-items: center; justify-content: center; box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        #loader { 
+            display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%; 
+            background: rgba(0,0,0,0.85); z-index: 100; flex-direction: column; 
+            align-items: center; justify-content: center; text-align: center;
+        }
+        .spinner { width: 40px; height: 40px; border: 4px solid rgba(255,255,255,0.1); border-top: 4px solid var(--primary); border-radius: 50%; animation: spin 1s linear infinite; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        
+        .flash { background: white !important; transition: 0.1s; }
     </style>
 </head>
 <body>
+
     <div class="logo">MIRROR ME</div>
+
     <div id="mirror-container">
-        <div id="loader"><p>AI İŞLENİYOR...</p></div>
-        <div id="ui-overlay"><div id="counter"></div><div id="instruction">360° TARAMAYI BAŞLAT</div></div>
+        <div id="loader">
+            <div class="spinner"></div>
+            <p style="margin-top:15px; font-size:12px; font-weight:bold;">AI İŞLENİYOR...<br><span style="font-size:10px; font-weight:normal;">(İlk deneme 30sn sürebilir)</span></p>
+        </div>
+        <div id="ui-overlay">
+            <div id="counter"></div>
+            <div id="instruction">TARAMAYI BAŞLAT</div>
+        </div>
         <video id="webcam" autoplay playsinline muted></video>
         <div id="result-display" style="display:none; height:100%;"></div>
     </div>
+
     <div id="angle-selector">
-        <button class="angle-btn" onclick="changeView('front')">ÖN</button>
-        <button class="angle-btn" onclick="changeView('right')">SAĞ</button>
-        <button class="angle-btn" onclick="changeView('back')">ARKA</button>
-        <button class="angle-btn" onclick="changeView('left')">SOL</button>
+        <button class="angle-btn active" onclick="changeView('front', this)">ÖN</button>
+        <button class="angle-btn" onclick="changeView('right', this)">SAĞ</button>
+        <button class="angle-btn" onclick="changeView('back', this)">ARKA</button>
+        <button class="angle-btn" onclick="changeView('left', this)">SOL</button>
     </div>
+
     <div class="bottom-nav">
-        <div style="color:#222; font-size:9px; font-weight:bold;" onclick="location.reload()">SIFIRLA</div>
-        <div class="main-btn" onclick="startScan()"><img src="https://cdn-icons-png.flaticon.com/512/685/685655.png" width="25"></div>
-        <div style="color:#222; font-size:9px; font-weight:bold;" onclick="selectGarment()">TARZ SEÇ</div>
+        <div style="color:#222; font-size:10px; font-weight:bold; cursor:pointer;" onclick="location.reload()">SIFIRLA</div>
+        <div class="main-btn" onclick="start360Scan()">
+            <img src="https://cdn-icons-png.flaticon.com/512/685/685655.png" width="30">
+        </div>
+        <div style="color:#222; font-size:10px; font-weight:bold; cursor:pointer;" onclick="selectGarment()">TARZ SEÇ</div>
     </div>
+
     <canvas id="canvas" style="display:none;"></canvas>
 
-    <script>
-        // TOKEN BURADA - HER ZAMAN GİZLİ TUTULMALI
+    <script type="module">
+        import { HfInference } from "https://cdn.jsdelivr.net/npm/@huggingface/inference@2.6.4/+esm";
+
+        // NOT: Hugging Face Token'ınız. Yazma (Write) yetkisi olduğundan emin olun.
         const HF_TOKEN = "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";
-        let twinImgs = {};
-        let currentGarment = null;
+        const hf = new HfInference(HF_TOKEN);
+        
+        let twinImages = {};
+        let selectedGarment = null;
 
         const video = document.getElementById('webcam');
-        navigator.mediaDevices.getUserMedia({ video: { facingMode: "user" } })
-            .then(s => video.srcObject = s).catch(e => alert("Kamera hatası: " + e));
+        const overlay = document.getElementById('ui-overlay');
+        const instruction = document.getElementById('instruction');
+        const counter = document.getElementById('counter');
 
-        window.startScan = async () => {
-            const steps = ["ÖN", "SAĞ", "ARKA", "SOL"];
-            const keys = ["front", "right", "back", "left"];
-            for(let i=0; i<4; i++) {
-                let count = 5;
-                document.getElementById('instruction').innerText = steps[i] + " İÇİN HAZIRLAN";
-                while(count > 0) {
-                    document.getElementById('counter').innerText = count;
-                    await new Promise(r => setTimeout(r, 1000));
-                    count--;
-                }
-                const c = document.getElementById('canvas');
-                c.width = 512; c.height = 512;
-                c.getContext('2d').drawImage(video, 0, 0, 512, 512);
-                twinImgs[keys[i]] = c.toDataURL('image/jpeg', 0.8).split(',')[1];
+        // Kamerayı Başlat
+        async function initCamera() {
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ 
+                    video: { facingMode: "user", width: 512, height: 512 } 
+                });
+                video.srcObject = stream;
+            } catch (err) {
+                alert("Kamera başlatılamadı: " + err.message);
             }
-            document.getElementById('instruction').innerText = "TARAMA TAMAM!";
-            document.getElementById('counter').innerText = "✓";
+        }
+
+        // 360 Tarama Süreci
+        window.start360Scan = async () => {
+            const steps = ["ÖN PROFİL", "SAĞA DÖNÜN", "ARKANIZI DÖNÜN", "SOLA DÖNÜN"];
+            const keys = ["front", "right", "back", "left"];
+            
+            for(let i=0; i<4; i++) {
+                let timeLeft = 5;
+                instruction.innerText = steps[i];
+                while(timeLeft > 0) {
+                    counter.innerText = timeLeft;
+                    await new Promise(r => setTimeout(r, 1000));
+                    timeLeft--;
+                }
+                
+                // Fotoğraf Çek
+                overlay.classList.add('flash');
+                capturePhoto(keys[i]);
+                await new Promise(r => setTimeout(r, 150));
+                overlay.classList.remove('flash');
+            }
+            
+            instruction.innerText = "TARAMA TAMAMLANDI!";
+            counter.innerText = "✓";
         };
 
+        function capturePhoto(key) {
+            const canvas = document.getElementById('canvas');
+            canvas.width = 512;
+            canvas.height = 512;
+            canvas.getContext('2d').drawImage(video, 0, 0, 512, 512);
+            twinImages[key] = canvas.toDataURL('image/jpeg', 0.8);
+        }
+
+        // Kıyafet Seçimi
         window.selectGarment = () => {
-            if(!twinImgs.front) { alert("Önce 360 tarama yapmalısın!"); return; }
+            if(!twinImages.front) { alert("Önce 360° tarama yapmalısınız!"); return; }
             const input = document.createElement('input');
             input.type = 'file';
+            input.accept = 'image/*';
             input.onchange = (e) => {
                 const reader = new FileReader();
                 reader.onload = (f) => {
-                    currentGarment = f.target.result.split(',')[1];
+                    selectedGarment = f.target.result;
                     document.getElementById('angle-selector').style.display = 'flex';
                     window.changeView('front');
                 };
@@ -87,45 +171,47 @@
             input.click();
         };
 
-        window.changeView = async (angle) => {
-            document.getElementById('loader').style.display = 'flex';
+        // AI Görüntü Oluşturma
+        window.changeView = async (angle, btn) => {
+            if(!selectedGarment) return;
             
-            // PROXY KULLANIMI: Tarayıcı engelini aşmak için
-            const proxyUrl = "https://corsproxy.io/?";
-            const targetUrl = "https://api-inference.huggingface.co/models/yisol/IDM-VTON";
+            const loader = document.getElementById('loader');
+            loader.style.display = 'flex';
+
+            if(btn) {
+                document.querySelectorAll('.angle-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+            }
 
             try {
-                const response = await fetch(proxyUrl + encodeURIComponent(targetUrl), {
+                // Base64'ten Blob'a çevrim
+                const personBlob = await (await fetch(twinImages[angle])).blob();
+                const garmentBlob = await (await fetch(selectedGarment)).blob();
+
+                // Hugging Face API Çağrısı (Daha hızlı olan model)
+                const result = await hf.request({
+                    model: "Kadirnar/VTON",
                     method: "POST",
-                    headers: {
-                        "Authorization": `Bearer ${HF_TOKEN}`,
-                        "Content-Type": "application/json"
-                    },
-                    body: JSON.stringify({
-                        inputs: {
-                            "person_image": twinImgs[angle],
-                            "garment_image": currentGarment
-                        }
-                    })
+                    inputs: {
+                        person_image: personBlob,
+                        garment_image: garmentBlob
+                    }
                 });
 
-                if (response.status === 503) {
-                    alert("Yapay Zeka uyanıyor... Lütfen 15 saniye sonra tekrar basın.");
-                    return;
-                }
-
-                const blob = await response.blob();
-                const url = URL.createObjectURL(blob);
+                const url = URL.createObjectURL(result);
                 document.getElementById('webcam').style.display = "none";
                 document.getElementById('result-display').style.display = "block";
                 document.getElementById('result-display').innerHTML = `<img src="${url}" class="result-img">`;
-            } catch (e) {
-                console.error(e);
-                alert("Bağlantı başarısız. Lütfen internetinizi kontrol edin.");
+                
+            } catch (err) {
+                console.error(err);
+                alert("Model uyanıyor veya yoğunluk var. Lütfen 15 saniye sonra tekrar deneyin.");
             } finally {
-                document.getElementById('loader').style.display = 'none';
+                loader.style.display = 'none';
             }
         };
+
+        initCamera();
     </script>
 </body>
 </html>
